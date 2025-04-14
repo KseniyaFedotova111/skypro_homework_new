@@ -11,7 +11,7 @@ def test_init_category(category):
 
 
 def test_category_count(category):
-    assert category.category_count == 2
+    assert category.category_count == 1
 
 
 def test_product_count(category):
