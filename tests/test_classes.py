@@ -1,3 +1,5 @@
+import pytest
+
 from src.classes import Category, Product
 
 
@@ -48,3 +50,27 @@ def test_category_representation(category):
                      f"но и получения дополнительных функций для удобства жизни, "
                      f"products={category._Category__products})")
     assert repr(category) == expected_repr
+
+
+def test_product_str_representation(samsung_product):
+    expected_str = "Samsung Galaxy S23 Ultra, 180000.0 руб. Остаток: 5 шт."
+    assert str(samsung_product) == expected_str
+
+
+def test_category_str_representation(category):
+    expected_str = "Смартфоны, количество продуктов: 27 шт."
+    assert str(category) == expected_str
+
+
+def test_product_addition(samsung_product, iphone_product):
+    assert samsung_product + iphone_product == 2580000
+
+
+def test_product_addition_with_invalid_type(samsung_product):
+    with pytest.raises(TypeError, match="Можно складывать только объекты Product"):
+        samsung_product + "not_a_product"
+
+
+def test_category_str_with_empty_products():
+    empty_category = Category("Пустая категория", "Нет товаров", [])
+    assert str(empty_category) == "Пустая категория, количество продуктов: 0 шт."

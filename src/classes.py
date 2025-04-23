@@ -26,6 +26,10 @@ class Category:
     def __repr__(self):
         return f"Category(name={self.name}, description={self.description}, products={self.__products})"
 
+    def __str__(self):
+        total_quantity = sum(p.quantity for p in self.__products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт."
+
 
 class Product:
     def __init__(self, name, description, price, quantity):
@@ -57,3 +61,11 @@ class Product:
     def __repr__(self):
         return (f"Product(name={self.name}, description={self.description}, "
                 f"price={self.__price}, quantity={self.quantity})")
+
+    def __str__(self):
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other):
+        if not isinstance(other, Product):
+            raise TypeError("Можно складывать только объекты Product")
+        return (self.price * self.quantity) + (other.price * other.quantity)
