@@ -1,5 +1,6 @@
 import pytest
-from src.classes import Product, Category
+
+from src.classes import Category, Product
 
 
 @pytest.fixture
@@ -29,3 +30,22 @@ def reset_counters():
     """сбрасывает счетчики перед тестом"""
     Category.category_count = 0
     Category.product_count = 0
+
+
+@pytest.fixture
+def iphone_product():
+    return Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
+
+
+@pytest.fixture
+def xiaomi_product():
+    return Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
+
+
+@pytest.fixture
+def category_with_products(samsung_product, iphone_product, xiaomi_product):
+    return Category(
+        "Смартфоны",
+        "Смартфоны, как средство не только коммуникации...",
+        [samsung_product, iphone_product, xiaomi_product]
+    )
