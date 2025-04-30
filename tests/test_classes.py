@@ -74,3 +74,34 @@ def test_product_addition_with_invalid_type(samsung_product):
 def test_category_str_with_empty_products():
     empty_category = Category("Пустая категория", "Нет товаров", [])
     assert str(empty_category) == "Пустая категория, количество продуктов: 0 шт."
+
+
+def test_smartphone_properties(smartphone):
+    assert smartphone.model == "Note 10"
+    assert smartphone.memory == 128
+    assert isinstance(smartphone, Product)
+
+
+def test_lawn_grass_properties(lawn_grass):
+    assert lawn_grass.country == "Германия"
+    assert lawn_grass.germination_period == "10 дней"
+    assert isinstance(lawn_grass, Product)
+
+
+def test_smartphone_str(smartphone):
+    assert "Модель: Note 10" in str(smartphone)
+
+
+def test_lawn_grass_str(lawn_grass):
+    assert "Страна: Германия" in str(lawn_grass)
+
+
+def test_add_smartphone_to_category(category_with_products, smartphone):
+    initial_count = len(category_with_products.products.split("\n"))
+    category_with_products.add_product(smartphone)
+    assert len(category_with_products.products.split("\n")) == initial_count + 1
+
+
+def test_add_invalid_to_category(category_with_products):
+    with pytest.raises(TypeError):
+        category_with_products.add_product("invalid")

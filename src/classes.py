@@ -10,11 +10,10 @@ class Category:
         Category.product_count += len(self.__products)
 
     def add_product(self, product):
-        if isinstance(product, Product):
-            self.__products.append(product)
-            Category.product_count += 1
-        else:
-            raise TypeError("Добавляемый объект должен быть экземпляром класса Product или его наследников")
+        if not isinstance(product, Product) or not issubclass(type(product), Product):
+            raise TypeError("Можно добавлять только объекты Product или его подклассов")
+        self.__products.append(product)
+        Category.product_count += 1
 
     @property
     def products(self):
@@ -68,4 +67,43 @@ class Product:
     def __add__(self, other):
         if not isinstance(other, Product):
             raise TypeError("Можно складывать только объекты Product")
+        if type(self) != type(other):
+            raise TypeError("Нельзя складывать товары разных классов")
         return (self.price * self.quantity) + (other.price * other.quantity)
+
+
+class Smartphone(Product):
+    def __init__(self, name, description, price, quantity, efficiency, model, memory, color):
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+    def __repr__(self):
+        return (f"Smartphone(name={self.name}, description={self.description}, "
+                f"price={self.price}, quantity={self.quantity}, "
+                f"efficiency={self.efficiency}, model={self.model}, "
+                f"memory={self.memory}, color={self.color})")
+
+    def __str__(self):
+        base = super().__str__()
+        return f"{base}, Модель: {self.model}, Память: {self.memory}GB, Цвет: {self.color}"
+
+
+class LawnGrass(Product):
+    def __init__(self, name, description, price, quantity, country, germination_period, color):
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
+
+    def __repr__(self):
+        return (f"LawnGrass(name={self.name}, description={self.description}, "
+                f"price={self.price}, quantity={self.quantity}, "
+                f"country={self.country}, germination_period={self.germination_period}, "
+                f"color={self.color})")
+
+    def __str__(self):
+        base = super().__str__()
+        return f"{base}, Страна: {self.country}, Срок прорастания: {self.germination_period}"
