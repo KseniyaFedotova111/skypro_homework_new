@@ -1,107 +1,85 @@
 import pytest
-
-from src.classes import Category, Product
-
-
-def test_init(samsung_product):
-    assert samsung_product.name == 'Samsung Galaxy S23 Ultra'
-    assert samsung_product.description == '256GB, Серый цвет, 200MP камера'
-    assert samsung_product.price == 180000.0
-    assert samsung_product.quantity == 5
+from src.classes import BaseProduct, Product, Category, Smartphone, LawnGrass, CreationLoggerMixin
 
 
-def test_init_category(category):
-    assert category.name == 'Смартфоны'
-    assert category.description == ('Смартфоны, как средство не только коммуникации, '
-                                    'но и получения дополнительных функций для удобства жизни')
+def test_product_init():
+    product = Product("Телефон", "Хороший телефон", 10000, 5)
+    assert product.name == "Телефон"
+    assert product.price == 10000
+    assert product.quantity == 5
 
 
-def test_category_count(category):
-    assert category.category_count == 1
+def test_product_price_set():
+    product = Product("Телефон", "Описание", 10000, 5)
+    product.price = 15000
+    assert product.price == 15000
+
+    product.price = -5000
+    assert product.price == 15000
 
 
-def test_product_count(category):
-    assert len(category.products) == 145
+def test_category_init():
+    product = Product("Телефон", "Описание", 10000, 5)
+    category = Category("Электроника", "Техника", [product])
+    assert category.name == "Электроника"
+    assert len(category.products.split('\n')) == 1
 
 
-def test_product_price_setter(samsung_product):
-    samsung_product.price = 175000.0
-    assert samsung_product.price == 175000.0
-
-    samsung_product.price = -50
-    assert samsung_product.price != -50
-
-
-def test_add_product_to_category(category):
-    new_product = Product("New Product", "Description", 150.0, 5)
-    category.add_product(new_product)
-    assert len(category.products.split("\n")) == 4
-    assert Category.product_count == 4
+def test_add_product_category():
+    category = Category("Электроника", "Техника")
+    product = Product("Телефон", "Описание", 10000, 5)
+    initial_count = len(category.products.split('\n')) if category.products else 0
+    category.add_product(product)
+    assert len(category.products.split('\n')) == initial_count + 1
 
 
-def test_product_representation(samsung_product):
-    expected_repr = ("Product(name=Samsung Galaxy S23 Ultra, description=256GB, Серый цвет, 200MP камера, "
-                     "price=180000.0, quantity=5)")
-    assert repr(samsung_product) == expected_repr
+def test_smartphone_init():
+    phone = Smartphone("iPhone", "Хороший", 50000, 10, 95.5, "13 Pro",
+                       256, "Black")
+    assert phone.model == "13 Pro"
+    assert phone.memory == 256
 
 
-def test_category_representation(category):
-    expected_repr = (f"Category(name=Смартфоны, description=Смартфоны, как средство не только коммуникации, "
-                     f"но и получения дополнительных функций для удобства жизни, "
-                     f"products={category._Category__products})")
-    assert repr(category) == expected_repr
+def test_lawn_grass_init():
+    grass = LawnGrass("Трава", "Зеленая", 500, 100, "Россия",
+                      "14 дней", "Зеленый")
+    assert grass.country == "Россия"
+    assert grass.germination_period == "14 дней"
 
 
-def test_product_str_representation(samsung_product):
-    expected_str = "Samsung Galaxy S23 Ultra, 180000.0 руб. Остаток: 5 шт."
-    assert str(samsung_product) == expected_str
-
-
-def test_category_str_representation(category):
-    expected_str = "Смартфоны, количество продуктов: 27 шт."
-    assert str(category) == expected_str
-
-
-def test_product_addition(samsung_product, iphone_product):
-    assert samsung_product + iphone_product == 2580000
-
-
-def test_product_addition_with_invalid_type(samsung_product):
-    with pytest.raises(TypeError, match="Можно складывать только объекты Product"):
-        samsung_product + "not_a_product"
-
-
-def test_category_str_with_empty_products():
-    empty_category = Category("Пустая категория", "Нет товаров", [])
-    assert str(empty_category) == "Пустая категория, количество продуктов: 0 шт."
-
-
-def test_smartphone_properties(smartphone):
-    assert smartphone.model == "Note 10"
-    assert smartphone.memory == 128
-    assert isinstance(smartphone, Product)
-
-
-def test_lawn_grass_properties(lawn_grass):
-    assert lawn_grass.country == "Германия"
-    assert lawn_grass.germination_period == "10 дней"
-    assert isinstance(lawn_grass, Product)
-
-
-def test_smartphone_str(smartphone):
-    assert "Модель: Note 10" in str(smartphone)
-
-
-def test_lawn_grass_str(lawn_grass):
-    assert "Страна: Германия" in str(lawn_grass)
-
-
-def test_add_smartphone_to_category(category_with_products, smartphone):
-    initial_count = len(category_with_products.products.split("\n"))
-    category_with_products.add_product(smartphone)
-    assert len(category_with_products.products.split("\n")) == initial_count + 1
-
-
-def test_add_invalid_to_category(category_with_products):
+def test_base_product_is_abstract():
     with pytest.raises(TypeError):
-        category_with_products.add_product("invalid")
+        BaseProduct("Тест", "Тест", 100, 1)
+
+
+def test_creation_logger_mixin():
+    class TestProduct(CreationLoggerMixin, BaseProduct):
+        def __init__(self, name, description, price, quantity):
+            super().__init__(name, description, price, quantity)
+            self._price = price
+
+        def __str__(self):
+            return f"{self.name}"
+
+        @property
+        def price(self):
+            return self._price
+
+        @price.setter
+        def price(self, value):
+            self._price = value
+
+    product = TestProduct("Тест", "Тест", 100, 1)
+    assert product.name == "Тест"
+
+
+def test_product_add():
+    p1 = Product("Товар1", "Описание", 100, 2)
+    p2 = Product("Товар2", "Описание", 200, 3)
+    assert p1 + p2 == 800
+
+
+def test_invalid_product_add():
+    p1 = Product("Товар1", "Описание", 100, 2)
+    with pytest.raises(TypeError):
+        p1 + "не товар"

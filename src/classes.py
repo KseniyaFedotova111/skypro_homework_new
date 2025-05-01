@@ -1,3 +1,69 @@
+from abc import ABC, abstractmethod
+
+
+class CreationLoggerMixin:
+    def __init__(self, *args, **kwargs):
+        print(f"Создан объект {self.__class__.__name__} с параметрами: {args}, {kwargs}")
+        super().__init__(*args, **kwargs)
+
+
+class BaseProduct(ABC):
+    @abstractmethod
+    def __init__(self, name, description, price, quantity):
+        self.name = name
+        self.description = description
+        self._price = price
+        self.quantity = quantity
+
+    @abstractmethod
+    def __str__(self):
+        pass
+
+    @property
+    @abstractmethod
+    def price(self):
+        pass
+
+    @price.setter
+    @abstractmethod
+    def price(self, value):
+        pass
+
+
+class Product(CreationLoggerMixin, BaseProduct):
+    def __init__(self, name, description, price, quantity):
+        super().__init__(name, description, price, quantity)
+
+    @property
+    def price(self):
+        return self._price
+
+    @price.setter
+    def price(self, value):
+        if value > 0:
+            self._price = value
+        else:
+            print("Цена не должна быть нулевая или отрицательная")
+
+    @classmethod
+    def new_product(cls, data):
+        return cls(**data)
+
+    def __repr__(self):
+        return (f"Product(name={self.name}, description={self.description}, "
+                f"price={self.price}, quantity={self.quantity})")
+
+    def __str__(self):
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other):
+        if not isinstance(other, Product):
+            raise TypeError("Можно складывать только объекты Product")
+        if type(self) != type(other):
+            raise TypeError("Нельзя складывать товары разных классов")
+        return (self.price * self.quantity) + (other.price * other.quantity)
+
+
 class Category:
     category_count = 0
     product_count = 0
@@ -10,7 +76,7 @@ class Category:
         Category.product_count += len(self.__products)
 
     def add_product(self, product):
-        if not isinstance(product, Product) or not issubclass(type(product), Product):
+        if not isinstance(product, Product) and not issubclass(type(product), Product):
             raise TypeError("Можно добавлять только объекты Product или его подклассов")
         self.__products.append(product)
         Category.product_count += 1
@@ -28,48 +94,6 @@ class Category:
     def __str__(self):
         total_quantity = sum(p.quantity for p in self.__products)
         return f"{self.name}, количество продуктов: {total_quantity} шт."
-
-
-class Product:
-    def __init__(self, name, description, price, quantity):
-        self.name = name
-        self.description = description
-        self.__price = price
-        self.quantity = quantity
-
-    @property
-    def price(self):
-        return self.__price
-
-    @price.setter
-    def price(self, value):
-        if value > 0:
-            self.__price = value
-        else:
-            print("Цена не должна быть нулевая или отрицательная")
-
-    @classmethod
-    def new_product(cls, data):
-        return cls(
-            name=data["name"],
-            description=data["description"],
-            price=data["price"],
-            quantity=data["quantity"]
-        )
-
-    def __repr__(self):
-        return (f"Product(name={self.name}, description={self.description}, "
-                f"price={self.__price}, quantity={self.quantity})")
-
-    def __str__(self):
-        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
-
-    def __add__(self, other):
-        if not isinstance(other, Product):
-            raise TypeError("Можно складывать только объекты Product")
-        if type(self) != type(other):
-            raise TypeError("Нельзя складывать товары разных классов")
-        return (self.price * self.quantity) + (other.price * other.quantity)
 
 
 class Smartphone(Product):

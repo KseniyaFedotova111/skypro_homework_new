@@ -1,8 +1,8 @@
 from classes import Category, Product, Smartphone, LawnGrass
 
-if __name__ == "__main__":
-    product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера",
-                       180000.0, 5)
+if __name__ == '__main__':
+    product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0,
+                       5)
     product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
     product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
 
@@ -21,70 +21,33 @@ if __name__ == "__main__":
     print(product3.price)
     print(product3.quantity)
 
-    category1 = Category(
-        "Смартфоны",
-        "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни",
-        [product1, product2, product3]
-    )
+    category1 = Category("Смартфоны",
+                         "Смартфоны, как средство не только коммуникации, но и получения дополнительных "
+                         "функций для удобства жизни",
+                         [product1, product2, product3])
 
     print(category1.name == "Смартфоны")
     print(category1.description)
-    print(category1.products)
-    print(Category.category_count)
-    print(Category.product_count)
+    print(len(category1.products))
+    print(category1.category_count)
+    print(category1.product_count)
 
     product4 = Product("55\" QLED 4K", "Фоновая подсветка", 123000.0, 7)
-    category1.add_product(product4)
-    print(category1.products)
-    print(Category.product_count)
-
-    category2 = Category(
-        "Телевизоры",
-        "Современный телевизор, который позволяет наслаждаться просмотром, станет вашим другом и помощником",
-        [product4]
-    )
+    category2 = Category("Телевизоры",
+                         "Современный телевизор, который позволяет наслаждаться просмотром, станет вашим "
+                         "другом и помощником",
+                         [product4])
 
     print(category2.name)
     print(category2.description)
+    print(len(category2.products))
     print(category2.products)
+
     print(Category.category_count)
     print(Category.product_count)
 
-    new_product_data = {
-        "name": "Samsung Galaxy S23 Ultra",
-        "description": "256GB, Серый цвет, 200MP камера",
-        "price": 180000.0,
-        "quantity": 5
-    }
-    new_product = Product.new_product(new_product_data)
-
-    print(new_product.name)
-    print(new_product.description)
-    print(new_product.price)
-    print(new_product.quantity)
-
-    new_product.price = 800
-    print(new_product.price)
-
-    new_product.price = -100
-    new_product.price = 0
-    print(new_product.price)
-
-    print(str(product1))
-    print(str(product2))
-    print(str(product3))
-
-    print(str(category1))
-
-    print(category1.products)
-
-    print(product1 + product2)
-    print(product1 + product3)
-    print(product2 + product3)
-
     smartphone1 = Smartphone("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера",
-                             180000.0, 5, 95.5,
-                             "S23 Ultra", 256, "Серый")
+                             180000.0, 5, 95.5, "S23 Ultra", 256, "Серый")
     smartphone2 = Smartphone("Iphone 15", "512GB, Gray space", 210000.0, 8,
                              98.2, "15", 512, "Gray space")
     smartphone3 = Smartphone("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14,
