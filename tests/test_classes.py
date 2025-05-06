@@ -83,3 +83,18 @@ def test_invalid_product_add():
     p1 = Product("Товар1", "Описание", 100, 2)
     with pytest.raises(TypeError):
         p1 + "не товар"
+
+
+def test_product_zero_quantity():
+    with pytest.raises(ValueError) as e:
+        Product("Бракованный", "Нельзя добавить", 1000, 0)
+    assert str(e.value) == "Товар с нулевым количеством не может быть добавлен"
+
+
+def test_category_middle_price(category):
+    assert category.middle_price() == (180000 + 210000 + 31000) / 3
+
+
+def test_empty_category_middle_price():
+    empty_category = Category("Пустая", "Нет товаров", [])
+    assert empty_category.middle_price() == 0
